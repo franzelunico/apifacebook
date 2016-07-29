@@ -10,10 +10,11 @@
     </head>
 
     <body>
-    <form method="post" action="index.html">
+        <form method="post" action="/token/">{% csrf_token %}
         <div class="box">
             <h1>Generate your token</h1>
-            <a href="#"><div class="btn">Get Token</div></a> <!-- End Btn -->
+            <a href="#"><div class="btn"><input type="submit" value="Get Token"></div></a> <!-- End Btn -->
+            
             <input type="text" name="user" value="user" onFocus="field_focus(this, 'user');" onblur="field_blur(this, 'user');" class="email" />
             <input type="text" name="token" value="token" onFocus="field_focus(this, 'token');" onblur="field_blur(this, 'token');" class="email" />
         </div> <!-- End Box -->

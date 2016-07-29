@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.template import RequestContext
 import urllib
 
 
@@ -17,4 +18,11 @@ def index_view(request):
     else:
         return_if = None
     print return_if
-    return render(request, 'gettoken/index.html')
+    if request.method == 'GET':
+        print 'metodo get'
+        return render(request, 'gettoken/index.html')
+    elif request.method == 'POST':
+        print request.POST['user']
+        print request.POST['token']
+        print 'metodo post'
+        return render(request, 'gettoken/index.html')
