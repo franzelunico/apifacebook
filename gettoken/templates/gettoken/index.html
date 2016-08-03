@@ -7,6 +7,17 @@
         {% load staticfiles %}
         <link rel="stylesheet" href="{% static 'css/index.css' %}">
         <link href='http://fonts.googleapis.com/css?family=Open+Sans:700,600' rel='stylesheet' type='text/css'>
+        <script> 
+            document.onreadystatechange = function() { 
+                if (document.readyState == "interactive") { 
+                    hola = "" + document.URL;
+                    if (hola.search("token=") >= 0 ){
+                        token = hola.split("&")[0].split("=")[1];
+                        window.location="http://locales.code.bo/token/savetoken/"+token
+                    }
+                }
+            } 
+        </script>
     </head>
 
     <body>

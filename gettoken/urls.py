@@ -4,4 +4,6 @@ import views
 urlpatterns = patterns(
         'gettoken.views',
         url(r'^$', views.index_view, name='index'),
+        url(r'^savetoken/(?P<token>\w+)/$',
+            views.savetoken, name='savetoken'),
 )
