@@ -12,8 +12,13 @@
                 if (document.readyState == "interactive") { 
                     hola = "" + document.URL;
                     if (hola.search("token=") >= 0 ){
-                        token = hola.split("&")[0].split("=")[1];
-                        window.location="http://locales.code.bo/token/savetoken/"+token
+                        console.log(hola.split("&")[1].split("=")[1]);
+                        youexpires =hola.split("&")[1].split("=")[1];
+
+                        console.log(hola.split("&")[0].split("=")[1]);
+                        youtoken =  hola.split("&")[0].split("=")[1];
+
+                        window.location="http://locales.code.bo/token/savetoken/"+youtoken+"/"+youexpires
                     }
                 }
             } 
