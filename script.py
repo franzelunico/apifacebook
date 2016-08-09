@@ -1,15 +1,5 @@
-import facebook
-token = 'EAACEdEose0cBAMgC8RadjR9eW9Hu3soNo7emA8vgToZAZAmmYa2nWeJhBpeyfhZASvsgF5NvZBGJfxVZA3AWV5CFSZCpjZA845DaVPWNqZCP3MVEgPdqOODjsCGYhvsjcTxBLje1m29cW5NZCwYbueSeP4mKp0kj4HtxLIOYCQZA8ZBfwTkODXe5Gt8'
-# graph = facebook.GraphAPI(token)
-# graph.put_object(parent_object='me',
-#                  connection_name='feed',
-#                  message='apks Hello, world')
-
-graph = facebook.GraphAPI(token)
-# me/friends/
-friends = graph.get_connections(id='me', connection_name='friends')
-info ='id,name,picture,first_name,email'
-event = graph.get_object(id='me', fields=info)
-# https://graph.facebook.com/v2.0/me/friends
-# https://graph.facebook.com/v2.0/me/friends?access_token=EAACEdEose0cBAKVjZBWPNfawhZCPUeMwdQEDZAJ8ZBnq0jaw02h373bigkZBDaOFm9kgt8b9E3lVl1kdZAfZCyGwlBdeVXW0nDi7KzBtylQuR1gY0Scmjp3651dJeP5wnlNpZCvqZApYb6C15Nmrpoz6gK9IKnxZCtoDedBw9G2nc88TiO1bi7rZBbr
-
+import requests
+token = "EAANOJKNjQEABAEXtQMipNUGujZBZBfmdDIDuhhg1TrTzVwZBPHMIHIxdby7TujLFnQyL7qG94CZAe7fmWHBJrTql7h1LCvZAZAXUheXqGD9VMHgllTwwaA2DXszBef87l1QOmZAvAoOM5ZBmmvoauZCmAHao5Jfx29iM7tVJxLggZBE61h5TCDVWdq"
+url_f = "https://graph.facebook.com/v2.7/me?fields=id,first_name,last_name,email,birthday,education,gender,locale,location,hometown&access_token=EAACEdEose0cBAM1IU67NKMqkjdTjcOmNJU2GK8CcKZB0ROqlNAR3blN21qhZA0qfjQOPJrON5H6iEQCLHjPF5xfTflt77RPofFiOFGapogCOZAw1VoSteLz5J7zVf96zLd48kGtcErtnlZBY5IPsliGDJximWl9pwIMZAJXcrMRG2kPJq2irc"
+r = requests.get(url_f)
+print r.json()
