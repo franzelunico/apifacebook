@@ -1,5 +1,7 @@
 #!/bin/bash
 rm -rf gettoken/migrations/*
+find . -name "*.pyc" -exec rm -vrf {} \;
+rm -rf gettoken/migrations/*
 rm db.sqlite3
 python manage.py makemigrations
 python manage.py migrate

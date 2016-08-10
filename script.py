@@ -1,5 +1,6 @@
-import requests
-token = "EAANOJKNjQEABAEXtQMipNUGujZBZBfmdDIDuhhg1TrTzVwZBPHMIHIxdby7TujLFnQyL7qG94CZAe7fmWHBJrTql7h1LCvZAZAXUheXqGD9VMHgllTwwaA2DXszBef87l1QOmZAvAoOM5ZBmmvoauZCmAHao5Jfx29iM7tVJxLggZBE61h5TCDVWdq"
-url_f = "https://graph.facebook.com/v2.7/me?fields=id,first_name,last_name,email,birthday,education,gender,locale,location,hometown&access_token=EAACEdEose0cBAM1IU67NKMqkjdTjcOmNJU2GK8CcKZB0ROqlNAR3blN21qhZA0qfjQOPJrON5H6iEQCLHjPF5xfTflt77RPofFiOFGapogCOZAw1VoSteLz5J7zVf96zLd48kGtcErtnlZBY5IPsliGDJximWl9pwIMZAJXcrMRG2kPJq2irc"
-r = requests.get(url_f)
-print r.json()
+import facebook
+youtoken = "EAACEdEose0cBACrLV3kVLG2whJnYwKx2D46x0FeL10aZAFAKZCoucGP7PduQp5jgteHlZBXwU5KBOb2KoZCfbJi8yYN1jDR14fCa68JcfX415dEYGK8pBt8rnhnZBaqhCX02JoXFGhwBbcCRfZAxhtjUZBXgks80kOXjxJB3OANjdzmTCCSlg5U"
+graph = facebook.GraphAPI(access_token=youtoken, version='2.1')
+fields_query = 'id,first_name,last_name,email,birthday,education,'
+fields_query += 'gender'
+event = graph.get_object(id='me', fields=fields_query)
