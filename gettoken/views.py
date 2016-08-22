@@ -1,19 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from .models import User
-from django.core.exceptions import ObjectDoesNotExist
+from .models import User, Location
 import facebook
 from dateutil import parser
+import pprint
 
 
-fb_app_id = 'you app id'
-# token = "EAACEdEose0cBAE4FSTzZC944nXcEdemr8aebrayu49c81JBQRYzwnlr3dcQH8aW77lLnCwRnSWP9ebTqAWCMVfcxq5GCSPUIREk0yoP9bX0lksKrtsBSdMYRUX69AD5ZCdSdY8Bk4nG3d13PWIIVAZCJeD6R0YpTPwZCrZCcughStMIiR06HB"
-# defaul ,id ,name ,first_name ,last_name ,age_range ,link ,gender ,locale
-# picture ,timezone ,updated_time ,verified
-# scope define permisos para el token
-# ref https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#login
-# lista de permisos permitidos
-# https://developers.facebook.com/docs/facebook-login/permissions/
+fb_app_id = '930344197111872'
 scope = "&scope=user_about_me,email,user_birthday,user_education_history"
 scope += ",user_location"
 
@@ -35,19 +28,36 @@ def savetoken(request, youtoken, youexpires):
 # https://developers.facebook.com/docs/graph-api/reference/v2.7/user
     scope = "id,name,first_name,last_name,email,birthday,education,location"
     profile = graph.get_object(id='me', fields=scope)
-    print profile
+    location = Location()
     user = User()
-    try:
-            user = User.objects.get(fb_id=profile["id"])
-    except ObjectDoesNotExist:
-            user = User()
-            user.fb_id = profile["id"]
+    if User.objects.filter(fb_id=profile["id"]).exists():
+        user = User.objects.get(fb_id=profile["id"])
+    else:
+        user = User()
+    if Location.objects.filter(location_id=profile["location"]["id"]).exists():
+        location = Location.objects.get(location_id=profile["location"]["id"])
+    else:
+        location = Location()
+    location.location_id = profile["location"]["id"]
+    location.location_name = profile["location"]["name"]
+    location.save()
+
+    user.fb_id = profile["id"]
     user.fb_first_name = profile["first_name"]
     user.fb_last_name = profile["last_name"]
     user.fb_email = profile["email"]
     user.fb_birthday = parser.parse(profile["birthday"]).date()
-    user.fb_education = profile["education"]
+    user.fb_education = "Defaul Value"
+    if profile.has_key("education"):
+        user.setEducation(profile["education"])
+        existe(profile["education"])
     user.fb_name = profile["name"]
-    user.fb_location = profile["location"]
+    user.fb_location = location
     user.save()
     return HttpResponseRedirect("http://locales.code.bo/token/")
+
+
+def existe(list_education):
+    pprint.pprint(list_education)
+    # for item in list_education:
+    #     pprint.print item

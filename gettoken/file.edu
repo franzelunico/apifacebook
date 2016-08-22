@@ -1,0 +1,6 @@
+{
+	'id': '141975276242517'
+	'type': 'College',
+	'concentration': [{'name': 'Information system'}],
+	'school': {'id': '106106219420905', 'name': 'University of San Sim\xf3n'},
+}
