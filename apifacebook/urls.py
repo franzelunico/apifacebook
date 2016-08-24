@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^token/', include('gettoken.urls')),
     url(r'^$', views.index, name='index'),
     url(r'^getaccess/', views.getaccess, name='access'),
+    url(r'^update/', views.update, name='update'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
