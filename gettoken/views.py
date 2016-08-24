@@ -41,18 +41,6 @@ def index(request):
             if user_now is not None:
                 if user_now.is_active:
                     login(request, user_now)
-                    school = School()
-                    school.save()
-                    location = Location()
-                    location.save()
-                    token = TokenInfo()
-                    token.save()
-                    user_fb = UserFb()
-                    user_fb.fb_education = school
-                    user_fb.fb_location = location
-                    user_fb.fb_token = token
-                    user_fb.user = user_now
-                    user_fb.save()
                     return render_to_response('gettoken/index.html', data)
                 else:
                     return HttpResponse("Usuario no activado")
@@ -64,7 +52,7 @@ def index_view(request):
     if request.method == 'GET':
         return render(request, 'gettoken/index.html')
     elif request.method == 'POST':
-        redir = "http://locales.code.bo/token/"
+        redir = "http://fl.code.bo/"
         urls = "https://www.facebook.com/dialog/oauth?+client_id="
         urls += fb_app_id+"&response_type=token"+"&redirect_uri="+redir
         urls += scope
@@ -73,7 +61,7 @@ def index_view(request):
 
 
 def getaccess(request):
-    redir = "http://locales.code.bo/"
+    redir = "http://fl.code.bo/"
     urls = "https://www.facebook.com/dialog/oauth?+client_id="
     urls += fb_app_id+"&response_type=token"+"&redirect_uri="+redir
     urls += scope
@@ -97,7 +85,7 @@ def savetoken(request, youtoken, youexpires):
     user_fb.save()
     print user_fb.fb_token.token
     print user_fb.fb_token.expires
-    return HttpResponseRedirect("http://locales.code.bo/")
+    return HttpResponseRedirect("http://fl.code.bo/")
 
 
 def update(request):
@@ -125,4 +113,4 @@ def update(request):
     if profile.has_key("education"):
         user.fb_education = user.setEducation(profile["education"])
     user.save()
-    return HttpResponseRedirect("http://locales.code.bo/token/")
+    return HttpResponseRedirect("http://fl.code.bo/")
