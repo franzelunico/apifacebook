@@ -1,10 +1,10 @@
 # crea una imagen de nombre    : dockerizingdjango_web
 #
 
-FROM tutum/nginx
+FROM nginx
 MAINTAINER Franz A. Lopez Choque
 RUN mkdir /code
 WORKDIR /code
 ADD . /code/
-RUN rm /etc/nginx/sites-enabled/default
-ADD configs/sites-enabled/ /etc/nginx/sites-enabled
+RUN rm /etc/nginx/conf.d/default.conf
+ADD configs/sites-enabled/ /etc/nginx/conf.d
