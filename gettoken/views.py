@@ -1,14 +1,12 @@
 from django.shortcuts import render
+from django.shortcuts import render_to_response
+from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from .models import Location, TokenInfo, User, School
 from django.http import HttpResponse
-from django.shortcuts import render_to_response
 import facebook
-import pprint
 from dateutil import parser
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User as UserDj
-from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_protect
 
 
@@ -17,88 +15,35 @@ scope = "&scope=user_about_me,email,user_birthday,user_education_history"
 scope += ",user_location"
 
 
-# @csrf_protect
-# def loginuser(request):
-#     if request.method == 'GET':
-#         if request.user.is_authenticated():
-#             user_dj = UserDj.objects.get(pk=request.user.pk)
-#             user_fb = UserFb.objects.get(user=user_dj)
-#             data = {'userinfo': user_fb}
-#             return render(request, 'gettoken/index.html', data)
-#         else:
-#             return render(request, 'gettoken/login.html')
-#     else:
-#         if request.user.is_authenticated():
-#             user_dj = UserDj.objects.get(pk=request.user.pk)
-#             user_fb = UserFb.objects.get(user=user_dj)
-#             data = {'userinfo': user_fb}
-#             return render(request, 'gettoken/index.html', data)
-#         else:
-#             data = request.POST
-#             name = data['user_name']
-#             password = data['password']
-#             user_now = authenticate(username=name, password=password)
-#             if user_now is not None:
-#                 if user_now.is_active:
-#                     login(request, user_now)
-#                     return render_to_response('gettoken/index.html', data)
-#                 else:
-#                     return HttpResponse("Usuario no activado")
-#             else:
-#                 return HttpResponse("Ingrese sus datos correctos")
-#
-#
-# def index_view(request):
-#     if request.method == 'GET':
-#         return render(request, 'gettoken/index.html')
-#     elif request.method == 'POST':
-#         redir = "http://local.fl.code.bo/"
-#         urls = "https://www.facebook.com/dialog/oauth?+client_id="
-#         urls += fb_app_id+"&response_type=token"+"&redirect_uri="+redir
-#         urls += scope
-#         res = HttpResponseRedirect(urls)
-#         return res
-#
-#
-# def getaccess(request):
-#     redir = "http://local.fl.code.bo/"
-#     urls = "https://www.facebook.com/dialog/oauth?+client_id="
-#     urls += fb_app_id+"&response_type=token"+"&redirect_uri="+redir
-#     urls += scope
-#     # render_to_response("foo.html", RequestContext(request, {}))
-#     # res = HttpResponseRedirect(urls,request)
-#     res = redirect(urls, request)
-#     return res
-#
-#
-#
-#
-# def index(request):
-#     user_dj = UserDj.objects.get(pk=request.user.pk)
-#     user_fb = UserFb.objects.get(user=user_dj)
-#     token = user_fb.fb_token.token
-#     graph = facebook.GraphAPI(access_token=token, version='2.7')
-#     scope = "id,name,first_name,last_name,email,birthday,education,location"
-#     profile = graph.get_object(id='me', fields=scope)
-#     location = Location()
-#     if Location.objects.filter(location_id=profile["location"]["id"]).exists():
-#         location = Location.objects.get(location_id=profile["location"]["id"])
-#     location.location_id = profile["location"]["id"]
-#     location.location_name = profile["location"]["name"]
-#     location.save()
-#
-#     user = user_fb
-#     user.fb_id = profile["id"]
-#     user.fb_first_name = profile["first_name"]
-#     user.fb_last_name = profile["last_name"]
-#     user.fb_email = profile["email"]
-#     user.fb_birthday = parser.parse(profile["birthday"]).date()
-#     user.fb_name = profile["name"]
-#     user.fb_location = location
-#     if profile.has_key("education"):
-#         user.fb_education = user.setEducation(profile["education"])
-#     user.save()
-#     return HttpResponseRedirect("http://local.fl.code.bo/")
+@csrf_protect
+def loginuser(request):
+    if request.method == 'GET':
+        if request.user.is_authenticated():
+            user_fb = User.objects.all()
+            data = {'userlist': user_fb}
+            return render(request, 'gettoken/useradmin.html', data)
+        else:
+            return render(request, 'gettoken/login.html')
+    else:
+        if request.user.is_authenticated():
+            user_fb = User.objects.all()
+            data = {'userlist': user_fb}
+            return render(request, 'gettoken/useradmin.html', data)
+        else:
+            data = request.POST
+            name = data['user_name']
+            password = data['password']
+            user_now = authenticate(username=name, password=password)
+            if user_now is not None:
+                if user_now.is_active:
+                    login(request, user_now)
+                    return render_to_response('gettoken/useradmin.html', data)
+                else:
+                    return HttpResponse("Usuario no activado")
+            else:
+                return HttpResponse("Ingrese sus datos correctos")
+
+
 def index(request):
     if request.method == 'GET':
         return render(request, 'gettoken/index.html')
@@ -118,6 +63,7 @@ def savetoken(request, youtoken, youexpires):
     profile = graph.get_object(id='me', fields=scope)
     user = getUser(profile, youtoken, youexpires)
     user.save()
+    setWorkandEducation(profile, user)
     return HttpResponseRedirect("http://local.fl.code.bo/")
 
 
@@ -160,11 +106,11 @@ def setToken(newtoken, token_expire, token):
     token.expires = token_expire
     return token
 
+
 def setLocation(profile):
     location = None
-    if profile.has_key("location"):
+    if "location" in profile:
         loc_id = profile["location"]["id"]
-        pprint.pprint(profile["location"])
         if Location.objects.filter(location_id=loc_id).exists():
             location = Location.objects.get(location_id=loc_id)
         else:
@@ -177,3 +123,29 @@ def setLocation(profile):
         else:
             location = Location()
     return location
+
+
+def setWorkandEducation(profile, user):
+    # no elimina los datos de usuario
+    # for user_x in user.fb_highschool.all():
+    #     user.fb_highschool.remove(user_x)
+    if "education" in profile:
+        for item in profile["education"]:
+            if item['type'] == "High School":
+                school = item['school']['id']
+                if School.objects.filter(school_id=school).exists():
+                    school = School.objects.get(school_id=school)
+                else:
+                    school = School()
+                    school.school_id = item['school']['id']
+                    school.school_name = item['school']['name']
+                    school.save()
+                user.fb_highschool.add(school)
+    else:
+        school = None
+        if School.objects.filter(school_id="vacio").exists():
+            school = School.objects.get(school_id="vacio")
+        else:
+            school = School()
+            school.save()
+        user.fb_highschool.add(school)

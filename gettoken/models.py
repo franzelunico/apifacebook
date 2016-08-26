@@ -22,7 +22,6 @@ class Location(models.Model):
 
 class School(models.Model):
     school_id = models.CharField(max_length=255, default="vacio")
-    school_type = models.CharField(max_length=255, default="vacio")
     school_name = models.CharField(max_length=255, default="vacio")
 
     def __unicode__(self):
@@ -38,6 +37,7 @@ class User(models.Model):
     fb_name = models.CharField(max_length=255, default="vacio")
     fb_token = models.ForeignKey('TokenInfo')
     fb_location = models.ForeignKey('Location')
+    fb_highschool = models.ManyToManyField('School')
     # fb_education = models.ForeignKey('School')
 
     def __unicode__(self):

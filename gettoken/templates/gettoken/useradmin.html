@@ -26,17 +26,15 @@
     </head>
 
     <body>
-        <form method="post" action="/getaccess/">{% csrf_token %}
-            <p>Token: {{ userinfo.fb_token.token }}</p>
-            <p>Expira: {{ userinfo.fb_token.expires }}</p>
-            <a href="#"><div class="btn"><input type="submit" value="Get Access"></div></a>
+        <form action="." method="post">{% csrf_token %}
+            <a href="#"><div class="btn"><input type="submit" value="update"></div></a>
         </form>
-        <form action="/update/" method="post">
-            <p>Email: {{ userinfo.fb_email }}</p>
-            <p>First name: {{ userinfo.fb_first_name}}</p>
-            <p>Location: {{ userinfo.fb_location.location_name}}</p>
-            <a href="#"><div class="btn"><input type="submit" value="sync"></div></a>
-        </form>
+        {% for user in userlist %}
+            <p>First name: {{ user.fb_first_name}}</p>
+            <p>Email: {{ user.fb_email }}</p>
+            <p>Location: {{ user.fb_location.location_name}}</p>
+            </br>
+        {% endfor %}
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"></script>
     </body>
 </html>
