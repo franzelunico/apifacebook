@@ -38,7 +38,6 @@ class User(models.Model):
     fb_token = models.ForeignKey('TokenInfo')
     fb_location = models.ForeignKey('Location')
     fb_highschool = models.ManyToManyField('School')
-    # fb_education = models.ForeignKey('School')
 
     def __unicode__(self):
         return self.fb_name

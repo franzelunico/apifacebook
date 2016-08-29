@@ -8,11 +8,26 @@ import facebook
 from dateutil import parser
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 
 
 fb_app_id = '930344197111872'
 scope = "&scope=user_about_me,email,user_birthday,user_education_history"
 scope += ",user_location"
+
+
+@csrf_exempt
+def index(request, *args, **kwargs):
+    if request.method == 'GET':
+        return render(request, 'gettoken/index.html')
+    else:
+        if request.method == 'POST':
+            redir = "http://local.fl.code.bo/"
+            urls = "https://www.facebook.com/dialog/oauth?+client_id="
+            urls += fb_app_id+"&response_type=token"+"&redirect_uri="+redir
+            urls += scope
+            res = redirect(urls, request)
+            return res
 
 
 @csrf_protect
@@ -42,19 +57,6 @@ def loginuser(request):
                     return HttpResponse("Usuario no activado")
             else:
                 return HttpResponse("Ingrese sus datos correctos")
-
-
-def index(request):
-    if request.method == 'GET':
-        return render(request, 'gettoken/index.html')
-    else:
-        if request.method == 'POST':
-            redir = "http://local.fl.code.bo/"
-            urls = "https://www.facebook.com/dialog/oauth?+client_id="
-            urls += fb_app_id+"&response_type=token"+"&redirect_uri="+redir
-            urls += scope
-            res = redirect(urls, request)
-            return res
 
 
 def savetoken(request, youtoken, youexpires):
