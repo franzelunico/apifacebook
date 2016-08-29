@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', views.loginuser, name='loginuser'),
+    url(r'^useradmin/$', views.useradmin, name='useradmin'),
     url(r'^savetoken/(?P<youtoken>\w+)/(?P<youexpires>\w+)/$',
         views.savetoken, name='savetoken'),
 ]

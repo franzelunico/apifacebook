@@ -1,5 +1,5 @@
+# from django.shortcuts import render_to_response
 from django.shortcuts import render
-from django.shortcuts import render_to_response
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from .models import Location, TokenInfo, User, School
@@ -7,8 +7,8 @@ from django.http import HttpResponse
 import facebook
 from dateutil import parser
 from django.contrib.auth import authenticate, login
-from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 
 fb_app_id = '930344197111872'
@@ -30,21 +30,13 @@ def index(request, *args, **kwargs):
             return res
 
 
-@csrf_protect
 def loginuser(request):
     if request.method == 'GET':
         if request.user.is_authenticated():
-            user_fb = User.objects.all()
-            data = {'userlist': user_fb}
-            return render(request, 'gettoken/useradmin.html', data)
+            return HttpResponseRedirect("/useradmin/")
         else:
             return render(request, 'gettoken/login.html')
     else:
-        if request.user.is_authenticated():
-            user_fb = User.objects.all()
-            data = {'userlist': user_fb}
-            return render(request, 'gettoken/useradmin.html', data)
-        else:
             data = request.POST
             name = data['user_name']
             password = data['password']
@@ -52,11 +44,18 @@ def loginuser(request):
             if user_now is not None:
                 if user_now.is_active:
                     login(request, user_now)
-                    return render_to_response('gettoken/useradmin.html', data)
+                    return HttpResponseRedirect("/useradmin/")
                 else:
                     return HttpResponse("Usuario no activado")
             else:
                 return HttpResponse("Ingrese sus datos correctos")
+
+
+@login_required(login_url='/login/')
+def useradmin(request):
+    user_fb = User.objects.all()
+    data = {'userlist': user_fb}
+    return render(request, 'gettoken/useradmin.html', data)
 
 
 def savetoken(request, youtoken, youexpires):
