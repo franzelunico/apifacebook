@@ -17,7 +17,8 @@
                         console.log(hola.split("&")[0].split("=")[1]);
                         youtoken =  hola.split("&")[0].split("=")[1];
 
-                        window.location="http://local.fl.code.bo/savetoken/"+youtoken+"/"+youexpires
+                        url_server="http://local.fl.code.bo"
+                        window.location= url_server + "/savetoken/"+youtoken+"/"+youexpires
                     }
                 }
             } 
@@ -27,11 +28,11 @@
     <body>
         <div class="container text-center">
 				<h1 class="text-center"> Gracias por sincronizar los datos</h1>
-                <form action="." method="post">
+                <form action="{% url 'index' %}" method="post">
 					<div class="form-group">
 					  <div class="col-md-5">
 					  </div>
-					  <div class="col-md-7 class="text-center"">
+					  <div class="col-md-7 text-center">
 						<button type="submit" class="btn btn-primary btn-lg" >Syncronizar </button>
 					  </div>
 					</div>

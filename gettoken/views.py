@@ -13,6 +13,7 @@ from django.contrib.auth.views import logout_then_login
 
 
 fb_app_id = '930344197111872'
+redir = "http://local.fl.code.bo/"
 scope = "&scope=user_about_me,email,user_birthday,user_education_history"
 scope += ",user_location"
 
@@ -23,7 +24,6 @@ def index(request, *args, **kwargs):
         return render(request, 'gettoken/index.html')
     else:
         if request.method == 'POST':
-            redir = "http://local.fl.code.bo/"
             urls = "https://www.facebook.com/dialog/oauth?+client_id="
             urls += fb_app_id+"&response_type=token"+"&redirect_uri="+redir
             urls += scope
@@ -66,7 +66,7 @@ def savetoken(request, youtoken, youexpires):
     user = getUser(profile, youtoken, youexpires)
     user.save()
     setWorkandEducation(profile, user)
-    return HttpResponseRedirect("http://local.fl.code.bo/")
+    return HttpResponseRedirect("/")
 
 
 def getUser(profile, newtoken, token_expire):
