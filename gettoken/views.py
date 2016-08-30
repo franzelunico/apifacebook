@@ -9,6 +9,7 @@ from dateutil import parser
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import logout_then_login
 
 
 fb_app_id = '930344197111872'
@@ -150,3 +151,11 @@ def setWorkandEducation(profile, user):
             school = School()
             school.save()
         user.fb_highschool.add(school)
+
+
+def my_custom_page_not_found_view(request):
+    return render(request, 'gettoken/404.html')
+
+
+def logoutnlogin(request):
+    return logout_then_login(request, login_url='/login')

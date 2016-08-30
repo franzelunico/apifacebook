@@ -9,8 +9,10 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', views.loginuser, name='loginuser'),
+    url(r'^logout/$', views.logoutnlogin, name='logout'),
     url(r'^useradmin/$', views.useradmin, name='useradmin'),
     url(r'^savetoken/(?P<youtoken>\w+)/(?P<youexpires>\w+)/$',
         views.savetoken, name='savetoken'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+handler404 = 'gettoken.views.my_custom_page_not_found_view'
