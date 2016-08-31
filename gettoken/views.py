@@ -10,12 +10,19 @@ from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import logout_then_login
+import json
+from fabric.api import task
+from fabric.operations import local
+from time import gmtime, strftime
 
 
 fb_app_id = '930344197111872'
 redir = "http://local.fl.code.bo/"
 scope = "&scope=user_about_me,email,user_birthday,user_education_history"
 scope += ",user_location"
+# from datetime import datetime
+# import calendar
+# from time import gmtime, strftime
 
 
 @csrf_exempt
@@ -63,6 +70,24 @@ def savetoken(request, youtoken, youexpires):
     graph = facebook.GraphAPI(access_token=youtoken, version='2.7')
     scope = "id,name,first_name,last_name,email,birthday,education,location"
     profile = graph.get_object(id='me', fields=scope)
+    # file process
+    print profile
+    namefile = profile["id"]
+    namefile += "_me_"  # api
+    # ISO 8601
+    print strftime("%Y-%m-%dT%H:%M:%S%z", gmtime())
+    namefile += strftime("%Y-%m-%dT%H:%M:%S%z", gmtime())
+    namefile += ".json"
+    data = json.dumps(profile, indent=4)
+    f = open(namefile, 'w')
+    f.write(data)
+    f.close()
+    putfile(namefile)
+    with open(namefile) as data_file:
+        data = json.load(data_file)
+        profile = data
+        print type(data)
+    # database process
     user = getUser(profile, youtoken, youexpires)
     user.save()
     setWorkandEducation(profile, user)
@@ -159,3 +184,9 @@ def my_custom_page_not_found_view(request):
 
 def logoutnlogin(request):
     return logout_then_login(request, login_url='/login')
+
+
+@task
+def putfile(namefile):
+    command = "aws s3 cp " + namefile + " s3://apifacebook/"
+    local(command)
