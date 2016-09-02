@@ -26,6 +26,7 @@
                         <th>First name</th>
                         <th>Email</th>
                         <th>Location</th>
+                        <th>PagesLikes</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,6 +36,11 @@
                         <td>{{ user.fb_first_name}}</td>
                         <td>{{ user.fb_email }}</td>
                         <td>{{ user.fb_location.location_name}}</td>
+                        <td>
+                            {% for page in user.fb_pages_likes.all %}
+                                <p>{{page}}</p>
+                            {% endfor %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

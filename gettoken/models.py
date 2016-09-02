@@ -28,6 +28,15 @@ class School(models.Model):
         return self.school_name
 
 
+class Page(models.Model):
+    fb_id = models.CharField(max_length=225, default="vacio")
+    name = models.CharField(max_length=225, default="vacio")
+    created_time = models.DateField(default=datetime.date.today)
+
+    def __unicode__(self):
+        return self.name
+
+
 class User(models.Model):
     fb_id = models.CharField(max_length=255, default="vacio")
     fb_first_name = models.CharField(max_length=255, default="vacio")
@@ -38,6 +47,7 @@ class User(models.Model):
     fb_token = models.ForeignKey('TokenInfo')
     fb_location = models.ForeignKey('Location')
     fb_highschool = models.ManyToManyField('School')
+    fb_pages_likes = models.ManyToManyField('Page')
 
     def __unicode__(self):
         return self.fb_name
