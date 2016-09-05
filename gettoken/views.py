@@ -18,7 +18,7 @@ from time import gmtime, strftime
 fb_app_id = '930344197111872'
 redir = "http://local.fl.code.bo/"
 scope = "&scope=user_about_me,email,user_birthday,user_education_history"
-scope += ",user_location,user_likes"
+scope += ",user_location,user_likes,user_friends"
 
 
 @csrf_exempt
@@ -39,6 +39,18 @@ def savetoken(request, youtoken, youexpires):
     scope = "id,name,first_name,last_name,email,birthday,education,location"
     profile = graph.get_object(id='me', fields=scope)
     likes = graph.get_connections(id='me', connection_name='likes')
+    createfileprofile(profile)
+    friends = graph.get_connections(id='me', connection_name='friends')
+    createfilefriends(friends, profile)
+    # database process
+    user = getUser(profile, youtoken, youexpires)
+    user.save()
+    setWorkandEducation(profile, user)
+    setPagesLikes(likes, user)
+    return HttpResponseRedirect("/")
+
+
+def createfileprofile(profile):
     namefile = profile["id"]
     namefile += "_me_"  # api
     # ISO 8601
@@ -48,16 +60,26 @@ def savetoken(request, youtoken, youexpires):
     f = open(namefile, 'w')
     f.write(data)
     f.close()
-    putfile(namefile)
+    # putfile(namefile)
     with open(namefile) as data_file:
         data = json.load(data_file)
         profile = data
-    # database process
-    user = getUser(profile, youtoken, youexpires)
-    user.save()
-    setWorkandEducation(profile, user)
-    setPagesLikes(likes, user)
-    return HttpResponseRedirect("/")
+
+
+def createfilefriends(friends, profile):
+    namefile = profile["id"]
+    namefile += "_friends_"  # api
+    # ISO 8601
+    namefile += strftime("%Y-%m-%dT%H:%M:%S%z", gmtime())
+    namefile += ".json"
+    data = json.dumps(friends, indent=4)
+    f = open(namefile, 'w')
+    f.write(data)
+    f.close()
+    # putfile(namefile)
+    with open(namefile) as data_file:
+        data = json.load(data_file)
+        friends = data
 
 
 def getUser(profile, newtoken, token_expire):
