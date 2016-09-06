@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand, CommandError
-from gettoken.models import User
+from gettoken.models import User, Snapshot
 from time import gmtime, strftime
+from fabric.operations import local
 import json
 import pprint
 import requests
+import datetime
 
 
 """
@@ -35,8 +38,10 @@ class Command(BaseCommand):
             res = self.style.SUCCESS('Successfully "%s"' % options['user'])
             self.stdout.write(res)
         if 'type' in options and options['type'] == "pages":
+            query_type = "pages"
             if user is not None:
-                url = "https://graph.facebook.com/v2.7/me/likes?access_token="
+                url_api = "" + "https://graph.facebook.com/v2.7/me/likes"
+                url = url_api + "?access_token="
                 url += token
                 pages = []
                 while url is not None:
@@ -52,20 +57,30 @@ class Command(BaseCommand):
                 url = "https://graph.facebook.com/v2.7/me/?access_token="
                 url += token
                 profile = requests.get(url).json()
-                self.createfileprofile(data, profile )
+                self.createfileprofile(data, profile, url_api, query_type)
                 pprint.pprint(requests.get(url).json())
 
-    def createfileprofile(self, likes, profile):
-        namefile = profile["id"]
-        namefile += "_likes_"  # api
+    def createfileprofile(self, likes, profile, url_api, query_type):
+        filename = query_type + "-" + profile["id"] + "@"
         # ISO 8601
-        namefile += strftime("%Y-%m-%dT%H:%M:%S%z", gmtime())
-        namefile += ".json"
+        format_date = "%Y-%m-%dT%H:%M:%S"
+        format_date_utc = format_date + "%z"
+        created_at = strftime(format_date_utc, gmtime())
+        filename += created_at
+        filename += ".json"
         data = json.dumps(likes, indent=4)
-        f = open(namefile, 'w')
+        f = open(filename, 'w')
         f.write(data)
         f.close()
-        # putfile(namefile)
-        with open(namefile) as data_file:
+        self.pushfile(filename)
+        with open(filename) as data_file:
             data = json.load(data_file)
             likes = data
+        created_at = datetime.datetime.utcnow()
+        snapshot = Snapshot(query_url=url_api, filename=filename,
+                            query_type=query_type, created_at=created_at)
+        snapshot.save()
+
+    def pushfile(self, filename):
+        command = "aws s3 cp " + filename + " s3://usersfacebook/"
+        local(command)
