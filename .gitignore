@@ -3,3 +3,4 @@ env/
 *.sw
 db.sqlite3
 static/
+gettoken/migrations/
