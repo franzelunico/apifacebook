@@ -37,28 +37,35 @@ class Command(BaseCommand):
                 raise CommandError(string)
             res = self.style.SUCCESS('Successfully "%s"' % options['user'])
             self.stdout.write(res)
-        if 'type' in options and options['type'] == "pages":
-            query_type = "pages"
-            if user is not None:
-                url_api = "" + "https://graph.facebook.com/v2.7/me/likes"
-                url = url_api + "?access_token="
-                url += token
-                pages = []
-                while url is not None:
-                    r = requests.get(url)
-                    data = r.json()
+        boolean_q = options['type'] == "pages"
+        boolean_q = boolean_q or options['type'] == "contacts"
+        boolean_q = boolean_q and 'type' in options and user is not None
+        if boolean_q:
+            query_type = options['type']
+            url_api = "" + "https://graph.facebook.com/v2.7/me/"
+            if options['type'] == "pages":
+                url_api += "likes"
+            if options['type'] == "contacts":
+                url_api += "friends"
+            url = url_api + "?access_token="
+            url += token
+            pages = []
+            while url is not None:
+                r = requests.get(url)
+                data = r.json()
+                if 'data' in data:
                     pages += data['data']
                     if 'paging' in data and 'next' in data['paging']:
                         url = data['paging']['next']
                     else:
                         url = None
-                data['data'] = pages
-                pprint.pprint(len(data['data']))
-                url = "https://graph.facebook.com/v2.7/me/?access_token="
-                url += token
-                profile = requests.get(url).json()
-                self.createfileprofile(data, profile, url_api, query_type)
-                pprint.pprint(requests.get(url).json())
+                else:
+                    url = None
+            url = "https://graph.facebook.com/v2.7/me/?access_token="
+            url += token
+            profile = requests.get(url).json()
+            self.createfileprofile(data, profile, url_api, query_type)
+            pprint.pprint(requests.get(url).json())
 
     def createfileprofile(self, likes, profile, url_api, query_type):
         filename = query_type + "-" + profile["id"] + "@"
@@ -72,7 +79,7 @@ class Command(BaseCommand):
         f = open(filename, 'w')
         f.write(data)
         f.close()
-        self.pushfile(filename)
+        # self.pushfile(filename)
         with open(filename) as data_file:
             data = json.load(data_file)
             likes = data
