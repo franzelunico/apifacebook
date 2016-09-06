@@ -51,3 +51,13 @@ class User(models.Model):
 
     def __unicode__(self):
         return self.fb_name
+
+
+class Snapshot(models.Model):
+    query_url = models.CharField(max_length=255)
+    filename = models.CharField(max_length=255)
+    query_type = models.CharField(max_length=225)
+    created_at = models.DateTimeField()
+
+    def __unicode__(self):
+        return self.namefile
