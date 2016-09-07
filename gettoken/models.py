@@ -60,4 +60,4 @@ class Snapshot(models.Model):
     created_at = models.DateTimeField()
 
     def __unicode__(self):
-        return self.namefile
+        return self.filename

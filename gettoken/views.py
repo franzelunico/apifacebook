@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
-from .models import Location, TokenInfo, User, School, Page
+from .models import Location, TokenInfo, User, School, Page, Snapshot
 from django.http import HttpResponse
 import facebook
 from dateutil import parser
@@ -229,5 +229,6 @@ def loginuser(request):
 @login_required(login_url='/login/')
 def useradmin(request):
     user_fb = User.objects.all()
-    data = {'userlist': user_fb}
+    snapshotlist = Snapshot.objects.all()
+    data = {'userlist': user_fb, 'snapshotlist': snapshotlist}
     return render(request, 'gettoken/useradmin.html', data)
