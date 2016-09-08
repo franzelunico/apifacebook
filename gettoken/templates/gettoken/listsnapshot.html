@@ -15,15 +15,19 @@
     <body>
         <div class="container">
             </br>
-            <form action="/logout/" method="post">{% csrf_token %}
-                <button  type="submit" class="btn btn-primary btn-sm" >Logout</button>
-            </form>
             </br>
-            <form action="." method="post">{% csrf_token %}
-                <h1>Lista de usuarios</h1>
-                <button  type="submit" class="btn btn-primary btn-sm" >Actualizar</button>
-            </form>
-            </br>
+            <div class="col">
+                <form action="/logout/" method="post" style="display:inline-block;">{% csrf_token %}
+                    <button  type="submit" class="btn btn-primary btn-sm" >Logout</button>
+                </form>
+                <form action="/useradmin/" method="post" style="display:inline-block;">{% csrf_token %}
+                    <button  type="submit" class="btn btn-primary btn-sm" >Actualizar</button>
+                </form>
+                <form action="/listsnapshot/" method="post" style="display:inline-block;">{% csrf_token %}
+                    <button  type="submit" class="btn btn-primary btn-sm" >Mostrar Snapshot</button>
+                </form>
+            </div>
+            <h1>Lista de Snapshot</h1>
             <table class="table table-bordered">
                 <thead>
                     <tr>

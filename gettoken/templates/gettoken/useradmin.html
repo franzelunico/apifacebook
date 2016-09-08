@@ -6,22 +6,29 @@
         <title>Get Token</title>
         <base href="/"/>
         <link href="static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
         <script id="__bs_script__">//<![CDATA[
             document.write("<script async src='http://HOST:8000/browser-sync/browser-sync-client.2.15.0.js'><\/script>".replace("HOST", location.hostname)); //]]>
         </script>
+        <base href="."/>
     </head>
 
     <body>
         <div class="container">
             </br>
-            <form action="/logout/" method="post">{% csrf_token %}
-                <button  type="submit" class="btn btn-primary btn-sm" >Logout</button>
-            </form>
             </br>
-            <form action="." method="post">{% csrf_token %}
-                <h1>Lista de usuarios</h1>
-                <button  type="submit" class="btn btn-primary btn-sm" >Actualizar</button>
-            </form>
+            <div class="col">
+                <form action="/logout/" method="post" style="display:inline-block;">{% csrf_token %}
+                    <button  type="submit" class="btn btn-primary btn-sm" >Logout</button>
+                </form>
+                <form action="/useradmin/" method="post" style="display:inline-block;">{% csrf_token %}
+                    <button  type="submit" class="btn btn-primary btn-sm" >Actualizar</button>
+                </form>
+                <form action="/listsnapshot/" method="post" style="display:inline-block;">{% csrf_token %}
+                    <button  type="submit" class="btn btn-primary btn-sm" >Mostrar Snapshot</button>
+                </form>
+            </div>
+            <h1>Lista de usuarios</h1>
             </br>
             <table class="table table-bordered">
                 <thead>
