@@ -6,7 +6,10 @@ var gulp = require('gulp'),
     browserSync = require('browser-sync').create();
 
 gulp.task('runserver', function() {
-  exec('python manage.py runserver 127.0.0.1:8001');
+  var child = exec('python manage.py runserver 127.0.0.1:8001');
+  child.stdout.pipe(process.stdout);
+  child.stderr.pipe(process.stderr);
+
 });
 
 gulp.task('styles', function () {
