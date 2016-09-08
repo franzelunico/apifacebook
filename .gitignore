@@ -2,5 +2,8 @@ env/
 *.pyc
 *.sw
 db.sqlite3
-static/
+static/admin/
+static/bootstrap/
+static/jquery/
 gettoken/migrations/
+node_modules/
