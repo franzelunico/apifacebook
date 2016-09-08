@@ -229,6 +229,12 @@ def loginuser(request):
 @login_required(login_url='/login/')
 def useradmin(request):
     user_fb = User.objects.all()
-    snapshotlist = Snapshot.objects.all()
-    data = {'userlist': user_fb, 'snapshotlist': snapshotlist}
+    data = {'userlist': user_fb}
     return render(request, 'gettoken/useradmin.html', data)
+
+
+@login_required(login_url='/login/')
+def listsnapshot(request):
+    snapshotlist = Snapshot.objects.all()
+    data = {'snapshotlist': snapshotlist}
+    return render(request, 'gettoken/listsnapshot.html', data)

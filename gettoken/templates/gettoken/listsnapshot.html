@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -25,25 +26,19 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Id</th>
-                        <th>First name</th>
-                        <th>Email</th>
-                        <th>Location</th>
-                        <th>PagesLikes</th>
+                        <th>URL</th>
+                        <th>File name</th>
+                        <th>Query type</th>
+                        <th>Create at</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for user in userlist %}
+                    {% for snapshot in snapshotlist %}
                     <tr>
-                        <td>{{ user.pk}}</td>
-                        <td>{{ user.fb_first_name}}</td>
-                        <td>{{ user.fb_email }}</td>
-                        <td>{{ user.fb_location.location_name}}</td>
-                        <td>
-                            {% for page in user.fb_pages_likes.all %}
-                                <p>{{page}}</p>
-                            {% endfor %}
-                        </td>
+                        <td>{{ snapshot.query_url}}</td>
+                        <td>{{ snapshot.filename}}</td>
+                        <td>{{ snapshot.query_type }}</td>
+                        <td>{{ snapshot.created_at}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

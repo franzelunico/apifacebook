@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^login/$', views.loginuser, name='loginuser'),
     url(r'^logout/$', views.logoutnlogin, name='logout'),
     url(r'^useradmin/$', views.useradmin, name='useradmin'),
+    url(r'^listsnapshot/$', views.listsnapshot, name='listsnapshot'),
     url(r'^savetoken/(?P<youtoken>\w+)/(?P<youexpires>\w+)/$',
         views.savetoken, name='savetoken'),
 ]
