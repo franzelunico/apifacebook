@@ -6,7 +6,7 @@ var gulp = require('gulp'),
     browserSync = require('browser-sync').create();
 
 gulp.task('runserver', function() {
-  var child = exec('python manage.py runserver 127.0.0.1:8001');
+  var child = exec('tail -f configs/sites-enabled/access.log  configs/sites-enabled/error.log');
   child.stdout.pipe(process.stdout);
   child.stderr.pipe(process.stderr);
 
