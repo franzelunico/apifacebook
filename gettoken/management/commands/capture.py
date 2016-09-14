@@ -57,13 +57,13 @@ class Command(BaseCommand):
 
     def getToken(self, user,  args, options):
         token = ""
-        print options
         if options['token'] is not None:
             token = options['token']
         else:
             token = user.fb_token.token
         return token
 
+    # Falta Token Expirado
     def getUser(self, args, options):
         user = None
         if 'user' in options:
@@ -98,25 +98,29 @@ class Command(BaseCommand):
         return url_api
 
     def createfile(self, likes, profile, url_api, query_type):
-        filename = query_type + "-" + profile["id"] + "@"
-        # ISO 8601
-        format_date = "%Y-%m-%dT%H:%M:%S"
-        format_date_utc = format_date + "%z"
-        created_at = strftime(format_date_utc, gmtime())
-        filename += created_at
-        filename += ".json"
-        data = json.dumps(likes, indent=4)
-        f = open(filename, 'w')
-        f.write(data)
-        f.close()
-        # self.pushfile(filename)
-        with open(filename) as data_file:
-            data = json.load(data_file)
-        created_at = datetime.datetime.utcnow()
-        snapshot = Snapshot(query_url=url_api, filename=filename,
-                            query_type=query_type, created_at=created_at)
-        snapshot.save()
-        return data
+        if 'id' in profile:
+            filename = query_type + "-" + profile["id"] + "@"
+            # ISO 8601
+            format_date = "%Y-%m-%dT%H:%M:%S"
+            format_date_utc = format_date + "%z"
+            created_at = strftime(format_date_utc, gmtime())
+            filename += created_at
+            filename += ".json"
+            data = json.dumps(likes, indent=4)
+            f = open(filename, 'w')
+            f.write(data)
+            f.close()
+            # self.pushfile(filename)
+            with open(filename) as data_file:
+                data = json.load(data_file)
+            created_at = datetime.datetime.utcnow()
+            snapshot = Snapshot(query_url=url_api, filename=filename,
+                                query_type=query_type, created_at=created_at)
+            snapshot.save()
+            return data
+        else:
+            string = 'Error update token'
+            raise CommandError(string)
 
     def pushfile(self, filename):
         command = "aws s3 cp " + filename + " s3://usersfacebook/"
