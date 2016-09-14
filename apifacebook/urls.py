@@ -16,4 +16,4 @@ urlpatterns = [
         views.savetoken, name='savetoken'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-handler404 = 'gettoken.views.my_custom_page_not_found_view'
+# handler404 = 'gettoken.views.my_custom_page_not_found_view'
