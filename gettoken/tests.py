@@ -31,6 +31,19 @@ class SimpleTest(TestCase):
                                        '--type=contacts', verbosity=3,
                                        interactive=False, stdout=out),
                           )
+        self.assertRaises(CommandError,
+                          call_command('capture',
+                                       '--user=131088583997853',
+                                       '--type=pages', verbosity=3,
+                                       interactive=False, stdout=out),
+                          )
+        out = StringIO()
+        self.assertRaises(CommandError,
+                          call_command('capture',
+                                       '--user=Testprueba Api Code',
+                                       '--type=contacts', verbosity=3,
+                                       interactive=False, stdout=out),
+                          )
         out = StringIO()
         self.assertRaises(CommandError,
                           call_command('capture',
