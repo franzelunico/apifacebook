@@ -2,11 +2,11 @@
 from django.core.management.base import BaseCommand, CommandError
 from gettoken.models import User, Snapshot
 from time import gmtime, strftime
-from fabric.operations import local
 import json
 import pprint
 import requests
 import datetime
+import boto3
 
 
 """
@@ -110,7 +110,7 @@ class Command(BaseCommand):
             f = open(filename, 'w')
             f.write(data)
             f.close()
-            # self.pushfile(filename)
+            self.pushfile(filename)
             with open(filename) as data_file:
                 data = json.load(data_file)
             created_at = datetime.datetime.utcnow()
@@ -123,5 +123,7 @@ class Command(BaseCommand):
             raise CommandError(string)
 
     def pushfile(self, filename):
-        command = "aws s3 cp " + filename + " s3://usersfacebook/"
-        local(command)
+        data = open(filename, 'r')
+        s3 = boto3.resource('s3')
+        s3.Bucket('usersfacebook').put_object(Key=filename, Body=data)
+        data.close()

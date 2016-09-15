@@ -1,4 +1,4 @@
 Django==1.9.8
 facebook-sdk==2.0.0
 python-dateutil
-Fabric==1.12.0
+boto3==1.4.0

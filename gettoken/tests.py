@@ -5,6 +5,11 @@ from django.core.management.base import CommandError
 from django.core.management import call_command
 """
 Antes de realizar los test actualizar el token de los usuarios
+https://usersfacebook.s3.amazonaws.com/prueba.json
+Simbolos en aws S3
+%40 @
+%3A :
+%2B +
 """
 
 

@@ -10,8 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import logout_then_login
 import json
-from fabric.api import task
-from fabric.operations import local
+import boto3
 from time import gmtime, strftime
 
 
@@ -199,10 +198,10 @@ def logoutnlogin(request):
     return logout_then_login(request, login_url='/login')
 
 
-@task
-def putfile(namefile):
-    command = "aws s3 cp " + namefile + " s3://apifacebook/"
-    local(command)
+def putfile(filename):
+    s3 = boto3.resource('s3')
+    data = open(filename, 'r')
+    s3.Bucket('usersfacebook').put_object(Key=filename, Body=data)
 
 
 def loginuser(request):
