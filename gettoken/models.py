@@ -54,7 +54,6 @@ class User(models.Model):
 
 
 class Snapshot(models.Model):
-    query_url = models.CharField(max_length=255)
     filename = models.CharField(max_length=255)
     query_type = models.CharField(max_length=225)
     created_at = models.DateTimeField()

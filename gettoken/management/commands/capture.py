@@ -51,7 +51,7 @@ class Command(BaseCommand):
         data['data'] = pages
         url = "https://graph.facebook.com/v2.7/me/?access_token=" + token
         profile = requests.get(url).json()
-        data = self.createfile(data, profile, url_api, options['type'])
+        data = self.createfile(data, profile, options['type'])
         if 'print' in options and options['print'] == 'True':
             pprint.pprint(data)
 
@@ -97,7 +97,7 @@ class Command(BaseCommand):
                 raise CommandError(string)
         return url_api
 
-    def createfile(self, likes, profile, url_api, query_type):
+    def createfile(self, likes, profile, query_type):
         if 'id' in profile:
             filename = query_type + "-" + profile["id"] + "@"
             # ISO 8601
@@ -114,8 +114,8 @@ class Command(BaseCommand):
             with open(filename) as data_file:
                 data = json.load(data_file)
             created_at = datetime.datetime.utcnow()
-            snapshot = Snapshot(query_url=url_api, filename=filename,
-                                query_type=query_type, created_at=created_at)
+            snapshot = Snapshot(filename=filename, query_type=query_type,
+                                created_at=created_at)
             snapshot.save()
             return data
         else:

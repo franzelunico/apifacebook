@@ -31,7 +31,6 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>URL</th>
                         <th>File name</th>
                         <th>Query type</th>
                         <th>Create at</th>
@@ -40,7 +39,6 @@
                 <tbody>
                     {% for snapshot in snapshotlist %}
                     <tr>
-                        <td>{{ snapshot.query_url}}</td>
                         <td>{{ snapshot.filename}}</td>
                         <td>{{ snapshot.query_type }}</td>
                         <td>{{ snapshot.created_at}}</td>
