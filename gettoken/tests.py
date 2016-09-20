@@ -3,13 +3,10 @@ from django.contrib.auth.models import User
 from django.utils.six import StringIO
 from django.core.management.base import CommandError
 from django.core.management import call_command
+from gettoken.models import Snapshot
+import os
 """
 Antes de realizar los test actualizar el token de los usuarios
-https://usersfacebook.s3.amazonaws.com/prueba.json
-Simbolos en aws S3
-%40 @
-%3A :
-%2B +
 """
 
 
@@ -56,3 +53,17 @@ class SimpleTest(TestCase):
                                        '--type=pages', verbosity=3,
                                        interactive=False, stdout=out),
                           )
+
+    """
+    To run the test is necessary comment the line 139 in capture.py
+    """
+    def get_file_s3(self):
+        snapshot = Snapshot.objects.get(pk=1)
+
+        os.chdir(os.getcwd()+"/"+snapshot.query_type+"/")
+
+        datafile = open(snapshot.filename, 'r')
+        res = datafile.read()
+        datafile.close()
+
+        self.assertEqual(res, snapshot.getDataS3())

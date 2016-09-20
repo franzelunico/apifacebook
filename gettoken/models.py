@@ -1,6 +1,7 @@
 # encoding:utf-8
 from django.db import models
 import datetime
+import boto3
 
 
 class TokenInfo(models.Model):
@@ -52,6 +53,15 @@ class User(models.Model):
     def __unicode__(self):
         return self.fb_name
 
+"""
+Antes de realizar los test actualizar el token de los usuarios
+https://usersfacebook.s3.amazonaws.com/prueba.json
+Simbolos en aws S3
+@ %40
+: %3A
++ %2B
+"""
+
 
 class Snapshot(models.Model):
     filename = models.CharField(max_length=255)
@@ -60,3 +70,18 @@ class Snapshot(models.Model):
 
     def __unicode__(self):
         return self.filename
+
+    def getSnapshotS3(bucketname='usersfacebook'):
+        s3 = boto3.resource('s3')
+        conn = boto3.client('s3')
+        for key in conn.list_objects(Bucket=bucketname)['Contents']:
+            filename = key['Key']
+            path_directory = '/Users/codebo04/Downloads/test/' + filename
+            s3.Bucket(bucketname).download_file(filename, path_directory)
+
+    def getDataS3(self):
+        s3 = boto3.resource('s3')
+        path = self.query_type + '/' + self.filename
+        snapfile = s3.Object('usersfacebook', path)
+        snaptext = snapfile.get()["Body"].read().decode("utf-8")
+        return snaptext

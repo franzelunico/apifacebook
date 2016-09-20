@@ -32,7 +32,7 @@ $ python manage.py runserver 127.0.0.1:8001
 ```
 
 ### Run Test with Django:
-Create the directory fixtures 
+Create the directory fixtures, before updating the token 
 ```sh
 $ python manage.py dumpdata gettoken --indent 4 > gettoken/fixtures/data.json
 $ python manage.py test gettoken.tests.SimpleTest

@@ -7,12 +7,12 @@ import pprint
 import requests
 import datetime
 import boto3
+import os
 
 
 """
-python manage.py
-closepoll --server=pyserver --port=8080,443,25,22,21 --keyword=pyisgood
 python manage.py capture --type=pages --user=<user_id>
+python manage.py capture --type=contacts --user=<user_id>
 """
 
 
@@ -106,24 +106,31 @@ class Command(BaseCommand):
             created_at = strftime(format_date_utc, gmtime())
             filename += created_at
             filename += ".json"
+
+            if not os.path.exists(os.getcwd()+"/"+query_type+"/"):
+                os.makedirs(os.getcwd()+"/"+query_type+"/")
+            os.chdir(os.getcwd()+"/"+query_type+"/")
+
             data = json.dumps(likes, indent=4)
             f = open(filename, 'w')
             f.write(data)
             f.close()
-            self.pushfile(filename)
-            with open(filename) as data_file:
-                data = json.load(data_file)
+
             created_at = datetime.datetime.utcnow()
             snapshot = Snapshot(filename=filename, query_type=query_type,
                                 created_at=created_at)
             snapshot.save()
+            self.pushfile(snapshot)
             return data
         else:
             string = 'Error update token'
             raise CommandError(string)
 
-    def pushfile(self, filename):
+    def pushfile(self, snapshot):
+        filename = snapshot.filename
+        path = snapshot.query_type + '/' + snapshot.filename
         data = open(filename, 'r')
         s3 = boto3.resource('s3')
-        s3.Bucket('usersfacebook').put_object(Key=filename, Body=data)
+        s3.Bucket('usersfacebook').put_object(Key=path, Body=data)
         data.close()
+        os.remove(filename)
