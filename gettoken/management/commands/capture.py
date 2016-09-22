@@ -3,7 +3,6 @@ from django.core.management.base import BaseCommand, CommandError
 from gettoken.models import User, Snapshot
 from time import gmtime, strftime
 import json
-import pprint
 import requests
 import datetime
 import boto3
@@ -24,10 +23,11 @@ class Command(BaseCommand):
                             required=True)
         parser.add_argument('-t', '--type', type=str, help='Type ',
                             required=True)
-        parser.add_argument('-p', '--print', type=str, help='Type ',
-                            required=False)
         parser.add_argument('-o', '--token', type=str, help='Type ',
                             required=False)
+        parser.add_argument('--print', action='store_true', dest='print',
+                            default=False,
+                            help='Show all information user',)
 
     def handle(self, *args, **options):
         user = self.getUser(args, options)
@@ -52,8 +52,9 @@ class Command(BaseCommand):
         url = "https://graph.facebook.com/v2.7/me/?access_token=" + token
         profile = requests.get(url).json()
         data = self.createfile(data, profile, options['type'])
-        if 'print' in options and options['print'] == 'True':
-            pprint.pprint(data)
+        if 'print' in options and options['print']:
+            parsed = json.loads(data)
+            print json.dumps(parsed, indent=4, sort_keys=True)
 
     def getToken(self, user,  args, options):
         token = ""
