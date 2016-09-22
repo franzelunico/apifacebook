@@ -55,7 +55,7 @@ class SimpleTest(TestCase):
                           )
 
     """
-    To run the test is necessary comment the line 139 in capture.py
+    To run the test is necessary comment the line 137 in capture.py
     """
     def get_file_s3(self):
         snapshot = Snapshot.objects.get(pk=1)
