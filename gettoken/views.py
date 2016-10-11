@@ -15,7 +15,7 @@ from time import gmtime, strftime
 
 
 fb_app_id = '930344197111872'
-redir = "http://local.fl.code.bo/"
+redir = "http://fl.code.bo/"
 scope = "&scope=user_about_me,email,user_birthday,user_education_history"
 scope += ",user_location,user_likes,user_friends"
 
