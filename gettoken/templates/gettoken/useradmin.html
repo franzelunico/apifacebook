@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>Get Token</title>
+        <base href="/"/>
+        <link href="static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <base href="."/>
+    </head>
+
+    <body>
+        <div class="container">
+            </br>
+            </br>
+            <div class="col">
+                <form action="/logout/" method="post" style="display:inline-block;">{% csrf_token %}
+                    <button  type="submit" class="btn btn-primary btn-sm" >Logout</button>
+                </form>
+                <form action="/useradmin/" method="post" style="display:inline-block;">{% csrf_token %}
+                    <button  type="submit" class="btn btn-primary btn-sm" >Actualizar</button>
+                </form>
+                <form action="/listsnapshot/" method="post" style="display:inline-block;">{% csrf_token %}
+                    <button  type="submit" class="btn btn-primary btn-sm" >Mostrar Snapshot</button>
+                </form>
+            </div>
+            <h1>Lista de usuarios</h1>
+            </br>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>First name</th>
+                        <th>Email</th>
+                        <th>Location</th>
+                        <th>PagesLikes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in userlist %}
+                    <tr>
+                        <td>{{ user.pk}}</td>
+                        <td>{{ user.fb_first_name}}</td>
+                        <td>{{ user.fb_email }}</td>
+                        <td>{{ user.fb_location.location_name}}</td>
+                        <td>
+                            {% for page in user.fb_pages_likes.all %}
+                                <p>{{page}}</p>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

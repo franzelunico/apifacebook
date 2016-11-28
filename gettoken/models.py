@@ -1,8 +1,7 @@
 # encoding:utf-8
 from django.db import models
-from django.contrib.auth.models import User as UserDjango
 import datetime
-import pprint
+import boto3
 
 
 class TokenInfo(models.Model):
@@ -10,10 +9,11 @@ class TokenInfo(models.Model):
     expires = models.CharField(max_length=225, default="-1")
 
     def __unicode__(self):
-        return self.token
+        return self.expires
 
 
 class Location(models.Model):
+    # Current city
     location_id = models.CharField(max_length=255, default="vacio")
     location_name = models.CharField(max_length=255, default="vacio")
 
@@ -23,47 +23,65 @@ class Location(models.Model):
 
 class School(models.Model):
     school_id = models.CharField(max_length=255, default="vacio")
-    school_type = models.CharField(max_length=255, default="vacio")
     school_name = models.CharField(max_length=255, default="vacio")
 
     def __unicode__(self):
         return self.school_name
 
-    def setValues(self, values):
-        res = School()
-        if School.objects.filter(school_id=values["id"]).exists():
-            res = School.objects.get(school_id=values["id"])
-            print "Existe"
-        res.school_id = values["id"]
-        res.school_type = values["type"]
-        pprint.pprint(values)
-        for key, value in values.iteritems():
-            if key == "school":
-                scholl = values[key]
-                for key_s, value_s in scholl.iteritems():
-                    if key_s == "name":
-                        res.school_name = scholl[key_s]
-        res.save()
-        return res
+
+class Page(models.Model):
+    fb_id = models.CharField(max_length=225, default="vacio")
+    name = models.CharField(max_length=225, default="vacio")
+    created_time = models.DateField(default=datetime.date.today)
+
+    def __unicode__(self):
+        return self.name
 
 
 class User(models.Model):
     fb_id = models.CharField(max_length=255, default="vacio")
     fb_first_name = models.CharField(max_length=255, default="vacio")
     fb_last_name = models.CharField(max_length=255, default="vacio")
-    fb_email = models.EmailField(max_length=255, default="vacio")
+    fb_email = models.EmailField(max_length=255, default="vacio@gmail.com")
     fb_birthday = models.DateField(default=datetime.date.today)
     fb_name = models.CharField(max_length=255, default="vacio")
-    fb_education = models.ForeignKey('School')
-    fb_location = models.ForeignKey('Location')
     fb_token = models.ForeignKey('TokenInfo')
-    user = models.OneToOneField(UserDjango, on_delete=models.CASCADE)
+    fb_location = models.ForeignKey('Location')
+    fb_highschool = models.ManyToManyField('School')
+    fb_pages_likes = models.ManyToManyField('Page')
 
     def __unicode__(self):
         return self.fb_name
 
-    def setEducation(self, values):
-        v_school = values[0]
-        res_s = School()
-        res_s = res_s.setValues(v_school)
-        return res_s
+"""
+Antes de realizar los test actualizar el token de los usuarios
+https://usersfacebook.s3.amazonaws.com/prueba.json
+Simbolos en aws S3
+@ %40
+: %3A
++ %2B
+"""
+
+
+class Snapshot(models.Model):
+    filename = models.CharField(max_length=255)
+    query_type = models.CharField(max_length=225)
+    created_at = models.DateTimeField()
+
+    def __unicode__(self):
+        return self.filename
+
+    def getSnapshotS3(bucketname='usersfacebook'):
+        s3 = boto3.resource('s3')
+        conn = boto3.client('s3')
+        for key in conn.list_objects(Bucket=bucketname)['Contents']:
+            filename = key['Key']
+            path_directory = '/Users/codebo04/Downloads/test/' + filename
+            s3.Bucket(bucketname).download_file(filename, path_directory)
+
+    def getDataS3(self):
+        s3 = boto3.resource('s3')
+        path = self.query_type + '/' + self.filename
+        snapfile = s3.Object('usersfacebook', path)
+        snaptext = snapfile.get()["Body"].read().decode("utf-8")
+        return snaptext

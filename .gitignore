@@ -2,3 +2,10 @@ env/
 *.pyc
 *.sw
 db.sqlite3
+static/admin/
+static/bootstrap/
+static/jquery/
+gettoken/migrations/
+node_modules/
+configs/sites-enabled/access.log
+configs/sites-enabled/error.log
